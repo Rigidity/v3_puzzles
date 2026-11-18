@@ -81,6 +81,8 @@ export fn x_from_y(
     )
 }
 
+// Only an exact `1` selects `by_y`, so compare to `true` rather than checking truthiness.
+#[expect(bool_comparison)]
 export fn calculate_deposit(
     amount0: Int,
     amount1: Int,
@@ -97,33 +99,16 @@ export fn calculate_deposit(
 
     if sqrt_price == sqrt_lower {
         assert amount0 > 0;
-        (0)
+        0
     } else if sqrt_price == sqrt_upper {
         assert amount1 > 0;
-        (0)
+        0
     } else if by_y == true {
         assert amount0 > 0;
-        let required_amount1 = y_from_x(
-            amount0,
-            sqrt_price,
-            sqrt_lower,
-            sqrt_upper,
-            scaling_factor,
-            round_up,
-        );
-        (required_amount1)
+        y_from_x(amount0, sqrt_price, sqrt_lower, sqrt_upper, scaling_factor, round_up)
     } else {
         assert amount1 > 0;
-        let required_amount0 = x_from_y(
-            amount1,
-            sqrt_price,
-            sqrt_lower,
-            sqrt_upper,
-            scaling_factor,
-            round_up,
-        );
-
-        (required_amount0)
+        x_from_y(amount1, sqrt_price, sqrt_lower, sqrt_upper, scaling_factor, round_up)
     }
 }
 
@@ -142,9 +127,16 @@ test fn test_required_amount() {
     assert amount == 1006;
 }
 
-test fn test_calc_L() {
-    let L = calculate_liquidity(2000, 1, 94878329060, 94868329805, 104880884817, 100000000000);
-    assert L == 10000;
+test fn test_calc_liquidity() {
+    let liquidity = calculate_liquidity(
+        2000,
+        1,
+        94878329060,
+        94868329805,
+        104880884817,
+        100000000000,
+    );
+    assert liquidity == 10000;
 }
 
 fn main() -> (Int) {

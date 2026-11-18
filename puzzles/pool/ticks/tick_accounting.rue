@@ -18,12 +18,10 @@ export fn empty_tick_result() -> TickSearchResult {
 export fn find_tick_at(ticks: List<Tick>, target_index: Int) -> TickSearchResult {
     if ticks is nil {
         empty_tick_result()
+    } else if ticks.first.tick_index == target_index {
+        TickSearchResult { found: true, tick: ticks.first }
     } else {
-        if ticks.first.tick_index == target_index {
-            TickSearchResult { found: true, tick: ticks.first }
-        } else {
-            find_tick_at(ticks.rest, target_index)
-        }
+        find_tick_at(ticks.rest, target_index)
     }
 }
 
@@ -31,12 +29,10 @@ export fn find_tick_at(ticks: List<Tick>, target_index: Int) -> TickSearchResult
 export fn find_tick_above(ticks: List<Tick>, target_index: Int) -> TickSearchResult {
     if ticks is nil {
         empty_tick_result()
+    } else if ticks.first.tick_index > target_index {
+        TickSearchResult { found: true, tick: ticks.first }
     } else {
-        if ticks.first.tick_index > target_index {
-            TickSearchResult { found: true, tick: ticks.first }
-        } else {
-            find_tick_above(ticks.rest, target_index)
-        }
+        find_tick_above(ticks.rest, target_index)
     }
 }
 
@@ -49,12 +45,10 @@ export fn find_tick_below(ticks: List<Tick>, target_index: Int) -> TickSearchRes
 
         if next.found {
             next
+        } else if ticks.first.tick_index <= target_index {
+            TickSearchResult { found: true, tick: ticks.first }
         } else {
-            if ticks.first.tick_index <= target_index {
-                TickSearchResult { found: true, tick: ticks.first }
-            } else {
-                next
-            }
+            next
         }
     }
 }
@@ -116,7 +110,7 @@ test fn finds_lower_tick_for_zero_for_one() {
 
     let result = find_next_tick(ticks, 25, true);
 
-    assert result.found == true;
+    assert result.found;
     assert result.tick.tick_index == 20;
 }
 
@@ -125,7 +119,7 @@ test fn finds_higher_tick_for_one_for_zero() {
 
     let result = find_next_tick(ticks, 25, false);
 
-    assert result.found == true;
+    assert result.found;
     assert result.tick.tick_index == 30;
 }
 
@@ -134,7 +128,7 @@ test fn returns_not_found_above_last_tick() {
 
     let result = find_next_tick(ticks, 40, false);
 
-    assert result.found == false;
+    assert !result.found;
 }
 
 test fn returns_not_found_below_first_tick() {
@@ -142,7 +136,7 @@ test fn returns_not_found_below_first_tick() {
 
     let result = find_next_tick(ticks, 5, true);
 
-    assert result.found == false;
+    assert !result.found;
 }
 
 test fn finds_exact_tick_when_swapping_down() {
@@ -150,7 +144,7 @@ test fn finds_exact_tick_when_swapping_down() {
 
     let result = find_next_tick(ticks, 20, true);
 
-    assert result.found == true;
+    assert result.found;
     assert result.tick.tick_index == 20;
 }
 
@@ -159,6 +153,6 @@ test fn skips_exact_tick_when_swapping_up() {
 
     let result = find_next_tick(ticks, 20, false);
 
-    assert result.found == true;
+    assert result.found;
     assert result.tick.tick_index == 30;
 }
