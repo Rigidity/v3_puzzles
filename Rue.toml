@@ -1,0 +1,7 @@
+[compiler]
+version = "0.11.0"
+entrypoint = "puzzles"
+
+[formatter]
+max_width = 100
+indent_width = 4

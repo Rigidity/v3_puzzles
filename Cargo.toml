@@ -1,0 +1,9 @@
+[package]
+name = "v3_puzzles"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+chia-wallet-sdk = "0.38.0"
+sha2 = "0.11.1"
